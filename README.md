@@ -26,7 +26,6 @@ Follow these steps to set up the project locally:
    
 ```bash
 git clone https://github.com/<your-username>/FitnessTracker_API.git
-cd BE_CapstoneProject
 ```
 
 2. Create a virtual environment and activate it:
