@@ -25,7 +25,7 @@ Follow these steps to set up the project locally:
 1. Clone the Repository
    
 ```bash
-git clone https://github.com/<your-username>/BE_CapstoneProject.git
+git clone https://github.com/<your-username>/FitnessTracker_API.git
 cd BE_CapstoneProject
 ```
 
