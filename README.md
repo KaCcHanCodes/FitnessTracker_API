@@ -1,12 +1,13 @@
 # Fitness Tracker API
 
-This project is a Django and Django REST Framework-based Fitness Tracker API with token-based authentication for API requests that provides features like user authentication with simple JWT authentication, workout metrics calculation, workout tracking and profile management.
+This project is a Django and Django REST Framework-based Fitness Tracker API with token-based authentication for API requests that provide features like user authentication with simple JWT authentication, workout tracking, workout activity history, workout metrics calculation, and profile management.
 
 ## Features
 
-- Simple JWT Authentication: Secure user access to the API, ensuring only authenticated users can view, create, or update workout information. 
-- Workout Metrics Calculation: Users can view workout metrics over a specified date range, including total duration, distance, and calories burned.
+- Simple JWT Authentication: Secure user access to the API, ensuring only authenticated users can view, create, or update workout information.
 - Workout Activity Management: Users can track workout sessions with details like start time, end time, distance, duration, and calories burned.
+- Workout Activity History: Users can view a display of all activities logged, including activity details like  Activity Type, Duration, Calories Burned, and Date.
+- Workout Metrics Calculation: Users can view workout metrics over a specified date range, including total duration, distance, and calories burned.
 - Profile Management: Users can update their profiles while authenticated via JWT.
 
 ## Getting Started
