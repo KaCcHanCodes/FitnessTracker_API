@@ -52,3 +52,13 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = ['age', 'weight']
+
+    def validate(self, data):
+        """
+        Ensure that all fields are provided in case of a full update (PUT request).
+        """
+        # If it's a PUT request, we require all fields to be present
+        if self.context['request'].method == 'PUT':
+            if 'weight' not in data or 'age' not in data:
+                raise serializers.ValidationError("Both 'weight' and 'age' are required for a full update (PUT request).")
+        return data

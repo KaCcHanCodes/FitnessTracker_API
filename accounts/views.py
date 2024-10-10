@@ -47,6 +47,11 @@ class UserProfileView(generics.RetrieveUpdateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [JWTAuthentication]
     serializer_class = ProfileSerializer
+    queryset = Profile.objects.all()
 
-    def get_queryset(self):
-        return Profile.objects.filter(user=self.request.user)
+    def get_object(self):
+        queryset = self.filter_queryset(self.get_queryset())
+        if queryset:
+            object = queryset.get(pk=self.request.user.id)
+            return object
+        return Response({'Error': "User profile does not exist!"}, status=status.HTTP_400_BAD_REQUEST)

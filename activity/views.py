@@ -10,6 +10,8 @@ from .serializers import WorkoutSerializer, WorkoutListSerializer
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 User = get_user_model()
 
@@ -22,9 +24,9 @@ class WorkoutCreateView(generics.CreateAPIView):
     - This view allows users to create a workout instance. The user_id is automatically
       retrieved from the authenticated user making the request and set in the workout instance.
     Methods:
-    - POST: Create a new workout.
-      - Requires the necessary workout fields in the request body.
-      - Automatically assigns the user making the request as the `user_id` for the workout.
+    - Create: Create a new workout.
+    - Requires the necessary workout fields in the request body.
+    - Automatically assigns the user making the request as the `user_id` for the workout.
     '''
     serializer_class = WorkoutSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -78,6 +80,8 @@ class WorkoutUpdateView(generics.RetrieveUpdateAPIView):
     - Allows users to retrieve and update details of a specific workout instance.
     - Authenticated users only.
     - Update method overridden, sets the end_location, calories_burned, and end_time attributes automatically.
+    - PUT request is configured to accept none input in all fields
+    - PATCH request is configured to update either activity_type, distance, or both after a workout.
     '''
     serializer_class = WorkoutSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -88,13 +92,18 @@ class WorkoutUpdateView(generics.RetrieveUpdateAPIView):
 
     def update(self, request, *args, **kwargs):
         activity = self.get_object() #get the instance model
-        activity.activity_type = request.data.get('activity_type') # update activity type
-        activity.end_time = timezone.now()  # get the current time
-        activity.calories_burned = activity.calculate_calories() # run calculations on calories burned after each update to workout.
-        serializer = WorkoutSerializer(activity, data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
+        if request.method == "PUT":
+            activity.end_time = timezone.now()  # get the current time
+            activity.calories_burned = activity.calculate_calories() # run calculations on calories burned after each update to workout.
+            serializer = WorkoutSerializer(activity, data=request.data, partial=True)
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+        else: #For PATCH requests
+            serializer = WorkoutSerializer(activity, data=request.data, partial=True)
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
 
 class WorkoutDeleteView(generics.DestroyAPIView):
     '''
@@ -130,6 +139,13 @@ class WorkoutMetricsView(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = WorkoutListSerializer
 
+    # Make start_date and end_date parameters available on Swagger UI
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter('start_date', openapi.IN_QUERY, description="Start date for filtering workouts", type=openapi.TYPE_STRING, format=openapi.FORMAT_DATE),
+            openapi.Parameter('end_date', openapi.IN_QUERY, description="End date for filtering workouts", type=openapi.TYPE_STRING, format=openapi.FORMAT_DATE),
+        ]
+    )
     def get(self, request, *args, **kwargs):
         #get date range from query parameters
         start_date = request.query_params.get('start_date')
