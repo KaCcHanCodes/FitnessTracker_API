@@ -28,7 +28,7 @@ SECRET_KEY = os.getenv('FIT_API_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG')
 
-ALLOWED_HOSTS = ['fitness_tracker_api.onrender.com']
+ALLOWED_HOSTS = ['fitness-tracker-api-83sd.onrender.com']
 
 # Security
 
